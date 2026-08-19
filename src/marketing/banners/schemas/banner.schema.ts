@@ -3,6 +3,24 @@ import { Document } from 'mongoose';
 
 export type BannerDocument = Banner & Document;
 
+@Schema({ _id: false })
+export class MediaItem {
+  @Prop({
+    required: true,
+    enum: ['image', 'video'],
+    default: 'image',
+  })
+  type!: 'image' | 'video';
+
+  @Prop({ required: true })
+  url!: string;
+
+  @Prop()
+  caption?: string;
+}
+
+export const MediaItemSchema = SchemaFactory.createForClass(MediaItem);
+
 @Schema({ timestamps: true })
 export class Banner {
   @Prop({ required: true })
@@ -20,6 +38,12 @@ export class Banner {
   @Prop()
   badgeText?: string;
 
+  @Prop({
+    type: [MediaItemSchema],
+    default: [],
+  })
+  items!: MediaItem[];
+
   @Prop()
   mediaUrl?: string;
 
@@ -29,14 +53,21 @@ export class Banner {
   @Prop()
   image?: string;
 
-  @Prop({ default: 'image' })
+  @Prop({
+    default: 'image',
+    enum: ['image', 'video'],
+  })
   mediaType?: 'image' | 'video';
 
   @Prop()
   linkUrl?: string;
 
-  @Prop({ default: 'HOME_HERO' })
-  location?: string;
+  @Prop({
+    type: String,
+    enum: ['HOME_HERO', 'PROMO_BAR', 'CATEGORY_SIDEBAR', 'POPUP'],
+    default: 'HOME_HERO',
+  })
+  location?: 'HOME_HERO' | 'PROMO_BAR' | 'CATEGORY_SIDEBAR' | 'POPUP';
 
   @Prop({ default: 'active' })
   status?: string;

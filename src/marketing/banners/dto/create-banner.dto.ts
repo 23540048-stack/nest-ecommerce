@@ -62,9 +62,9 @@ export class CreateBannerDto {
   @IsOptional()
   linkUrl?: string;
 
-  @IsString()
+  @IsEnum(['HOME_HERO', 'PROMO_BAR', 'CATEGORY_SIDEBAR', 'POPUP'])
   @IsOptional()
-  location?: string;
+  location?: 'HOME_HERO' | 'PROMO_BAR' | 'CATEGORY_SIDEBAR' | 'POPUP';
 
   @IsString()
   @IsOptional()
