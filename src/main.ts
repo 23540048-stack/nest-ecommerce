@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import * as dns from 'dns';
 import cookieParser = require('cookie-parser');
@@ -8,23 +9,28 @@ import cookieParser = require('cookie-parser');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // 1. Ép kiểu NestExpressApplication để sử dụng app.set()
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // 2. BẮT BUỘC TRÊN RENDER: Nhận diện HTTPS từ Reverse Proxy để gửi Secure Cookie
+  app.set('trust proxy', 1);
 
   app.use(cookieParser());
-  // 1. Helmet: Nới lỏng cấu hình cross-origin để tránh chặn hình ảnh/request từ Frontend
+
+  // 3. Helmet: Nới lỏng cấu hình cross-origin
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
 
-  // 2. Bật CORS cho Next.js (chạy port 3001)
+  // 4. Bật CORS cho Frontend Vercel (Không dùng '*' khi credentials = true)
   app.enableCors({
-    origin: process.env.FRONTEND_URL || '*',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   });
 
-  // 3. Chuẩn hóa Validation DTO
+  // 5. Chuẩn hóa Validation DTO
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

@@ -66,20 +66,13 @@ export class AuthController {
     // LƯU JWT VÀO HTTPONLY COOKIE
     // ==========================================================
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie(cookieName, result.access_token, {
-      // JavaScript frontend KHÔNG thể đọc token
       httpOnly: true,
-
-      // Production yêu cầu HTTPS
-      secure: process.env.NODE_ENV === 'production',
-
-      // Phù hợp với frontend/backend hiện tại
-      sameSite: 'lax',
-
-      // Cookie có hiệu lực toàn bộ website
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       path: '/',
-
-      // 1 ngày
       maxAge: 24 * 60 * 60 * 1000,
     });
 
