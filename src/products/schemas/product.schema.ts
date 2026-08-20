@@ -51,13 +51,19 @@ export class Product {
   @Prop({ type: Types.ObjectId, ref: 'Category' })
   category?: Types.ObjectId;
 
+  @Prop({
+    type: String,
+    enum: ['ACTIVE', 'LOW_STOCK', 'OUT_OF_STOCK'],
+    default: 'ACTIVE',
+  })
+  status!: string;
+
   @Prop({ default: 0 })
   rating!: number;
 
   @Prop({ default: 0 })
   numReviews!: number;
 
-  // Sử dụng ReviewSchema ở đây
   @Prop({ type: [ReviewSchema], default: [] })
   reviews!: Review[];
 }

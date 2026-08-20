@@ -29,12 +29,11 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { name, email, password, confirmPassword } = registerDto;
 
-    // Check password confirmation
     if (password !== confirmPassword) {
       throw new BadRequestException('Passwords do not match!');
     }
 
-    // Create a new user through UsersService
+    // Pass password thô, Schema pre('save') sẽ tự mã hóa
     const newUser = await this.usersService.create({
       name,
       email,
@@ -49,8 +48,10 @@ export class AuthService {
 
   // 2. Validate login credentials
   async validateUser(email: string, pass: string) {
+    // ⚠️ LƯU Ý: Đảm bảo findByEmail() trong UsersService có .select('+password')
     const user = await this.usersService.findByEmail(email);
-    if (!user) {
+
+    if (!user || !user.password) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
@@ -72,7 +73,6 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
-    // Payload stored in JWT token
     const payload = {
       sub: user._id,
       email: user.email,
@@ -94,7 +94,7 @@ export class AuthService {
     };
   }
 
-  // 4. Forgot password request -> Create Token & Send Email
+  // 4. Forgot password request
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
     const { email } = forgotPasswordDto;
     const user = await this.usersService.findByEmail(email);
@@ -103,7 +103,6 @@ export class AuthService {
       throw new NotFoundException('No account exists with this email address!');
     }
 
-    // Generate a random token and set expiration to 15 minutes
     const resetToken = crypto.randomBytes(32).toString('hex');
     const tokenExpires = new Date(Date.now() + 15 * 60 * 1000);
 
@@ -115,7 +114,6 @@ export class AuthService {
       this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-    // Send confirmation email
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Password Reset Request',
@@ -137,7 +135,6 @@ export class AuthService {
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const { token, newPassword } = resetPasswordDto;
 
-    // Find user by token and check expiration
     const user = await this.usersService.findByResetToken(token);
 
     if (
@@ -150,8 +147,8 @@ export class AuthService {
       );
     }
 
-    // Hash the new password and remove reset token
-    user.password = await bcrypt.hash(newPassword, 10);
+    // 🟢 SỬA: Gán trực tiếp newPassword, để Schema pre('save') tự mã hóa (tránh double hash)
+    user.password = newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();

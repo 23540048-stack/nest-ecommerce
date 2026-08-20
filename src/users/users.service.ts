@@ -28,8 +28,8 @@ export class UsersService {
     const existed = await this.userModel.findOne({ email });
     if (existed) throw new BadRequestException('Email already exists!');
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new this.userModel({ name, email, password: hashedPassword });
+    // 🟢 SỬA: Truyền password thô, hook pre('save') trong Schema sẽ tự động hash 1 lần duy nhất
+    const user = new this.userModel({ name, email, password });
     return user.save();
   }
 
@@ -167,7 +167,8 @@ export class UsersService {
     userId: string,
     dto: { currentPassword: string; newPassword: string },
   ) {
-    const user = await this.userModel.findById(userId);
+    // 🟢 SỬA 1: Bổ sung .select('+password') để lấy trường password ra đối chiếu
+    const user = await this.userModel.findById(userId).select('+password');
     if (!user) throw new NotFoundException('User not found');
 
     const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
@@ -175,8 +176,8 @@ export class UsersService {
       throw new BadRequestException('Current password is not correct');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
-    user.password = hashedPassword;
+    // 🟢 SỬA 2: Gán trực tiếp newPassword, để hook pre('save') mã hóa tự động
+    user.password = dto.newPassword;
     await user.save();
 
     return { message: 'Password updated successfully' };
@@ -194,8 +195,9 @@ export class UsersService {
   }
 
   // 7. Find User By Email
-  async findByEmail(email: string) {
-    return this.userModel.findOne({ email }).exec();
+  async findByEmail(email: string): Promise<UserDocument | null> {
+    // 🟢 SỬA: Bổ sung .select('+password') để AuthService dùng đăng nhập
+    return this.userModel.findOne({ email }).select('+password').exec();
   }
 
   // 8. Find User By Reset Token
@@ -269,15 +271,12 @@ export class UsersService {
       if (matched) currentTier = matched;
     }
 
-    // 1. Tích lũy tổng chi tiêu (USD)
     user.totalSpent = (user.totalSpent || 0) + orderTotal;
 
-    // 2. Tính số Chakra/Điểm thưởng ($1 USD = 1 Chakra * Tiêu chuẩn cấp)
     const multiplier = currentTier?.pointsMultiplier || 1;
     const earnedPoints = Math.floor(orderTotal * multiplier);
     user.points = (user.points || 0) + earnedPoints;
 
-    // 3. Tra cứu & Cập nhật Rank/Tier mới dựa trên tổng chi tiêu
     const newTier = await this.findMatchingTier(user.totalSpent);
     if (newTier) {
       user.tier = newTier._id as Types.ObjectId;

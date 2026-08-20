@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 import { Role } from '../../auth/enums/role.enum';
 
 export type UserDocument = User & Document;
@@ -29,13 +30,13 @@ export class User {
   @Prop({ required: true, unique: true })
   email!: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password!: string;
 
-  @Prop()
+  @Prop({ select: false })
   resetPasswordToken?: string;
 
-  @Prop()
+  @Prop({ select: false })
   resetPasswordExpires?: Date;
 
   @Prop()
@@ -54,16 +55,23 @@ export class User {
   isBlocked!: boolean;
 
   @Prop({ default: 0 })
-  points!: number; // Điểm thưởng tích lũy
+  points!: number;
 
   @Prop({ default: 0 })
-  chakra!: number; // Bổ sung Ví Chakra đổi Voucher
+  chakra!: number;
 
   @Prop({ default: 0 })
-  totalSpent!: number; // Tổng chi tiêu tích lũy
+  totalSpent!: number;
 
   @Prop({ type: Types.ObjectId, ref: 'MembershipTier' })
-  tier?: Types.ObjectId; // Liên kết tới Hạng thành viên
+  tier?: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre<UserDocument>('save', async function () {
+  if (!this.isModified('password')) return;
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
