@@ -22,7 +22,6 @@ export class CreateMembershipTierDto {
   @IsOptional()
   badgeColor?: string;
 
-  // ⚠️ KHÔNG ĐƯỢC THIẾU FIELD NÀY (Nếu thiếu NestJS sẽ xóa khỏi request)
   @IsArray()
   @IsString({ each: true })
   @IsOptional()

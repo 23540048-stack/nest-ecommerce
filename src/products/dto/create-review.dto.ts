@@ -1,4 +1,3 @@
-// dto/create-review.dto.ts
 import {
   IsArray,
   IsNotEmpty,
@@ -12,17 +11,16 @@ import { Type } from 'class-transformer';
 
 export class CreateReviewDto {
   @Type(() => Number)
-  @IsNotEmpty({ message: 'Vui lòng chọn số sao đánh giá' })
-  @IsNumber({}, { message: 'Số sao phải là một số' })
-  @Min(1, { message: 'Số sao tối thiểu là 1' })
-  @Max(5, { message: 'Số sao tối đa là 5' })
+  @IsNotEmpty({ message: 'Please select a rating' })
+  @IsNumber({}, { message: 'Rating must be a number' })
+  @Min(1, { message: 'Rating must be at least 1' })
+  @Max(5, { message: 'Rating must be at most 5' })
   rating!: number;
 
-  @IsNotEmpty({ message: 'Nội dung nhận xét không được để trống' })
+  @IsNotEmpty({ message: 'Review content cannot be empty.' })
   @IsString()
   comment!: string;
 
-  // Bổ sung 2 trường này để ValidationPipe cho phép đi qua
   @IsOptional()
   @IsString()
   orderId?: string;

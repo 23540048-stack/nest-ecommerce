@@ -1,12 +1,12 @@
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class ResetPasswordDto {
-  @IsNotEmpty({ message: 'Token không được để trống' })
+  @IsNotEmpty({ message: 'Token cannot be empty.' })
   @IsString()
   token!: string;
 
-  @IsNotEmpty({ message: 'Vui lòng nhập mật khẩu mới' })
+  @IsNotEmpty({ message: 'Please enter a new password.' })
   @IsString()
-  @MinLength(6, { message: 'Mật khẩu mới tối thiểu 6 ký tự' })
+  @MinLength(6, { message: 'New password must be at least 6 characters long.' })
   newPassword!: string;
 }

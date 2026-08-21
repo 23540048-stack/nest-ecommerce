@@ -21,7 +21,7 @@ export class PaymentsService {
     const order = await this.orderModel.findById(orderId);
 
     if (!order) {
-      throw new BadRequestException('Đơn hàng không tồn tại!');
+      throw new BadRequestException('Order does not exist!');
     }
 
     // 1. CONFIG
@@ -32,7 +32,9 @@ export class PaymentsService {
     const returnUrl = process.env.VNP_RETURNURL?.trim();
 
     if (!tmnCode || !secretKey || !vnpUrl || !returnUrl) {
-      throw new BadRequestException('Thiếu cấu hình VNPay trong file .env');
+      throw new BadRequestException(
+        'Missing VNPay configuration in the .env file.',
+      );
     }
 
     // 2. CLIENT IP
@@ -70,7 +72,7 @@ export class PaymentsService {
 
       vnp_TxnRef: orderId,
 
-      vnp_OrderInfo: `Thanh toan don hang ${orderId}`,
+      vnp_OrderInfo: `Pay for the order. ${orderId}`,
 
       vnp_OrderType: 'other',
 
@@ -133,7 +135,7 @@ export class PaymentsService {
     const secretKey = process.env.VNP_HASHSECRET?.trim();
 
     if (!secretKey) {
-      throw new BadRequestException('Thiếu VNP_HASHSECRET');
+      throw new BadRequestException('Missing VNP_HASHSECRET');
     }
 
     const signData = qs.stringify(vnpParams, {
@@ -145,7 +147,7 @@ export class PaymentsService {
     const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
     if (secureHash !== signed) {
-      throw new BadRequestException('Chữ ký không hợp lệ!');
+      throw new BadRequestException('Invalid signature!');
     }
 
     const orderId = vnpParams['vnp_TxnRef'];
@@ -159,7 +161,7 @@ export class PaymentsService {
 
       return {
         status: 'success',
-        message: 'Thanh toán VNPay thành công!',
+        message: 'VNPay payment successful!',
       };
     }
 
@@ -169,7 +171,7 @@ export class PaymentsService {
 
     return {
       status: 'failed',
-      message: 'Thanh toán VNPay thất bại!',
+      message: 'VNPay payment failed!',
     };
   }
 

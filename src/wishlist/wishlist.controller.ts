@@ -15,17 +15,16 @@ import { CreateWishlistItemDto } from './dto/create-wishlist.dto';
 import { ClientAuthGuard } from '../auth/guards/client-auth.guard';
 
 @Controller('wishlist')
-@UseGuards(ClientAuthGuard) // Áp dụng cho toàn bộ API Wishlist của Khách hàng
+@UseGuards(ClientAuthGuard)
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
-  // 🟢 Hàm phụ trợ lấy userId an toàn từ req.user (tương thích mọi kiểu JwtStrategy)
   private getUserId(req: any): string {
     const userId =
       req.user?._id || req.user?.id || req.user?.userId || req.user?.sub;
 
     if (!userId) {
-      throw new UnauthorizedException('Không tìm thấy thông tin người dùng.');
+      throw new UnauthorizedException('User information not found');
     }
 
     return userId;

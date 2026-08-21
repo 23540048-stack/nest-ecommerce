@@ -12,7 +12,6 @@ export enum BadgeLabel {
 
 @Schema({ timestamps: true })
 export class FeaturedProduct {
-  // Liên kết tới đúng ID sản phẩm trong DB
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: 'Product',

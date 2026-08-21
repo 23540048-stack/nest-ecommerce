@@ -22,15 +22,20 @@ export class UsersService {
   ) {}
 
   // 1. Create New User
+  // src/users/users.service.ts
+
   async create(createUserDto: CreateUserDto) {
     const { name, email, password } = createUserDto;
 
     const existed = await this.userModel.findOne({ email });
     if (existed) throw new BadRequestException('Email already exists!');
 
-    // 🟢 SỬA: Truyền password thô, hook pre('save') trong Schema sẽ tự động hash 1 lần duy nhất
     const user = new this.userModel({ name, email, password });
-    return user.save();
+    const savedUser = await user.save();
+
+    const { password: _, ...userWithoutPassword } = savedUser.toObject();
+
+    return userWithoutPassword;
   }
 
   // 2. Get All Users (Exclude Passwords)
@@ -167,7 +172,6 @@ export class UsersService {
     userId: string,
     dto: { currentPassword: string; newPassword: string },
   ) {
-    // 🟢 SỬA 1: Bổ sung .select('+password') để lấy trường password ra đối chiếu
     const user = await this.userModel.findById(userId).select('+password');
     if (!user) throw new NotFoundException('User not found');
 
@@ -176,7 +180,6 @@ export class UsersService {
       throw new BadRequestException('Current password is not correct');
     }
 
-    // 🟢 SỬA 2: Gán trực tiếp newPassword, để hook pre('save') mã hóa tự động
     user.password = dto.newPassword;
     await user.save();
 
@@ -196,7 +199,6 @@ export class UsersService {
 
   // 7. Find User By Email
   async findByEmail(email: string): Promise<UserDocument | null> {
-    // 🟢 SỬA: Bổ sung .select('+password') để AuthService dùng đăng nhập
     return this.userModel.findOne({ email }).select('+password').exec();
   }
 

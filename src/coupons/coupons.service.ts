@@ -27,16 +27,8 @@ export class CouponsService {
 
     return {
       ...obj,
-
-      // Backend: usageLimit
-      // Frontend: maxUses
       maxUses: obj.usageLimit ?? 0,
-
-      // Backend: isActive
-      // Frontend: status
       status: obj.isActive ? 'active' : 'inactive',
-
-      // Currency
       currency: 'USD',
     };
   }
@@ -128,32 +120,20 @@ export class CouponsService {
 
     const couponData: any = {
       code,
-
       title: dto.title,
-
       discountType: dto.discountType,
-
       discountValue: Number(dto.discountValue),
-
       minOrderValue: Number(dto.minOrderValue ?? 0),
-
       usageLimit: Number(dto.maxUses ?? 100),
-
-      // IMPORTANT:
       // Each user can use this coupon only once by default.
       userLimit: 1,
-
       maxDiscountAmount:
         dto.maxDiscountAmount !== undefined
           ? Number(dto.maxDiscountAmount)
           : undefined,
-
       isActive: dto.status !== undefined ? dto.status === 'active' : true,
-
       startDate,
-
       usedCount: 0,
-
       usedBy: [],
     };
 
@@ -163,7 +143,6 @@ export class CouponsService {
     }
 
     const created = await this.couponModel.create(couponData);
-
     return this.mapToFrontendResponse(created);
   }
 
@@ -173,10 +152,8 @@ export class CouponsService {
 
   async getAllCoupons(search?: string) {
     const filter: any = {};
-
     if (search?.trim()) {
       const keyword = search.trim();
-
       filter.$or = [
         {
           code: {
@@ -465,15 +442,7 @@ export class CouponsService {
       throw new BadRequestException('This coupon has reached its usage limit!');
     }
 
-    // -------------------------------------------------------
     // USER USAGE LIMIT
-    //
-    // Default:
-    // userLimit = 1
-    //
-    // Therefore:
-    // One user can use one coupon only once.
-    // -------------------------------------------------------
 
     if (userId) {
       let userObjectId: Types.ObjectId;
@@ -537,17 +506,11 @@ export class CouponsService {
 
     return {
       code: coupon.code,
-
       discountType: coupon.discountType,
-
       discountValue: coupon.discountValue,
-
       discountAmount,
-
       originalValue: orderValue,
-
       finalAmount,
-
       currency: 'USD',
     };
   }

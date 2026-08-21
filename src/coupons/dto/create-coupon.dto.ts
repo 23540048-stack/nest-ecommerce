@@ -61,11 +61,6 @@ export class CreateCouponDto {
   })
   maxUses?: number;
 
-  /**
-   * Maximum discount amount in USD.
-   *
-   * Only relevant for percentage coupons.
-   */
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

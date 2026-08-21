@@ -1,4 +1,3 @@
-// src/admin/dashboard/dashboard.module.ts
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DashboardController } from './dashboard.controller';

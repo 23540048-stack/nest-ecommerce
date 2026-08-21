@@ -22,7 +22,7 @@ export class ChatbotService {
     try {
       const apiKey = this.configService.get<string>('GROQ_API_KEY');
       if (!apiKey) {
-        throw new Error('Thiếu GROQ_API_KEY trong file .env');
+        throw new Error('Missing GROQ_API_KEY in the .env file.');
       }
 
       const groq = new OpenAI({

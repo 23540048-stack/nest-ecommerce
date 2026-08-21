@@ -55,11 +55,11 @@ export class ProductsController {
   @UseInterceptors(FileInterceptor('image', multerOptions))
   uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('Vui lòng chọn file ảnh để upload!');
+      throw new BadRequestException('Please select an image file to upload!');
     }
 
     return {
-      message: 'Upload file lên Cloudinary thành công',
+      message: 'File uploaded to Cloudinary successfully.',
       imageUrl: file.path,
     };
   }
@@ -72,7 +72,7 @@ export class ProductsController {
     @Param('id') productId: string,
     @Request() req: any,
     @Body() createReviewDto: CreateReviewDto,
-    @UploadedFiles() files: Express.Multer.File[], // Hứng mảng file ảnh
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
     const userId = req.user?.userId || req.user?.sub;
     return this.productsService.addReview(
@@ -80,7 +80,7 @@ export class ProductsController {
       userId,
       req.user.name,
       createReviewDto,
-      files, // Truyền mảng file sang service để upload Cloudinary
+      files,
     );
   }
 

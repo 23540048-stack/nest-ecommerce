@@ -29,9 +29,7 @@ import { Role } from '../auth/enums/role.enum';
 export class CouponsController {
   constructor(private readonly couponsService: CouponsService) {}
 
-  // =========================================================
   // ADMIN - CREATE COUPON
-  // =========================================================
 
   @Post()
   @UseGuards(AdminAuthGuard, RolesGuard)
@@ -40,9 +38,7 @@ export class CouponsController {
     return this.couponsService.createCoupon(dto);
   }
 
-  // =========================================================
   // ADMIN - GET ALL COUPONS
-  // =========================================================
 
   @Get()
   @UseGuards(AdminAuthGuard, RolesGuard)
@@ -50,19 +46,14 @@ export class CouponsController {
   getAllCoupons(@Query('search') search?: string) {
     return this.couponsService.getAllCoupons(search);
   }
-
-  // =========================================================
   // PUBLIC - GET AVAILABLE COUPONS
-  // =========================================================
 
   @Get('public')
   getPublicCoupons() {
     return this.couponsService.getPublicCoupons();
   }
 
-  // =========================================================
-  // APPLY COUPON (Khách hàng áp dụng mã giảm giá khi đặt hàng)
-  // =========================================================
+  // APPLY COUPON
 
   @Post('apply')
   @UseGuards(ClientAuthGuard)
@@ -75,9 +66,7 @@ export class CouponsController {
     );
   }
 
-  // =========================================================
   // ADMIN - UPDATE COUPON
-  // =========================================================
 
   @Put(':id')
   @UseGuards(AdminAuthGuard, RolesGuard)
@@ -86,9 +75,7 @@ export class CouponsController {
     return this.couponsService.updateCoupon(id, dto);
   }
 
-  // =========================================================
   // ADMIN - TOGGLE STATUS
-  // =========================================================
 
   @Patch(':id/toggle')
   @UseGuards(AdminAuthGuard, RolesGuard)
@@ -97,9 +84,7 @@ export class CouponsController {
     return this.couponsService.toggleActiveStatus(id);
   }
 
-  // =========================================================
   // ADMIN - DELETE COUPON
-  // =========================================================
 
   @Delete(':id')
   @UseGuards(AdminAuthGuard, RolesGuard)

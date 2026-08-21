@@ -19,7 +19,6 @@ export class CreateVoucherDto {
   @IsNotEmpty()
   code!: string;
 
-  // Đặt @IsOptional() nếu name không bắt buộc
   @IsString()
   @IsOptional()
   name?: string;

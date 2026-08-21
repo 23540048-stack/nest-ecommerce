@@ -22,9 +22,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // ============================================================
-  // GET ME / PROFILE (Bổ sung để khôi phục phiên đăng nhập)
-  // ============================================================
+  // GET ME / PROFILE
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
@@ -32,18 +30,14 @@ export class AuthController {
     return req.user;
   }
 
-  // ============================================================
   // REGISTER
-  // ============================================================
 
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
-  // ============================================================
   // LOGIN
-  // ============================================================
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -53,18 +47,14 @@ export class AuthController {
   ) {
     const result = await this.authService.login(loginDto);
 
-    // ==========================================================
     // XÁC ĐỊNH COOKIE DỰA TRÊN ROLE
-    // ==========================================================
 
     const cookieName =
       result.user.role === 'admin'
         ? 'admin_access_token'
         : 'client_access_token';
 
-    // ==========================================================
     // LƯU JWT VÀO HTTPONLY COOKIE
-    // ==========================================================
 
     const isProduction = process.env.NODE_ENV === 'production';
 
@@ -76,9 +66,7 @@ export class AuthController {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    // ==========================================================
     // KHÔNG TRẢ ACCESS TOKEN VỀ FRONTEND
-    // ==========================================================
 
     return {
       message: result.message,
@@ -86,31 +74,23 @@ export class AuthController {
     };
   }
 
-  // ============================================================
   // FORGOT PASSWORD
-  // ============================================================
 
   @Post('forgot-password')
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
 
-  // ============================================================
   // RESET PASSWORD
-  // ============================================================
 
   @Post('reset-password')
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
   }
 
-  // ============================================================
   // LOGOUT
-  // ============================================================
-
-  // ============================================================
   // LOGOUT CLIENT
-  // ============================================================
+
   @Post('client/logout')
   @HttpCode(HttpStatus.OK)
   logoutClient(@Res({ passthrough: true }) res: Response) {
@@ -124,9 +104,8 @@ export class AuthController {
     return { message: 'Client logout successful!' };
   }
 
-  // ============================================================
   // LOGOUT ADMIN
-  // ============================================================
+
   @Post('admin/logout')
   @HttpCode(HttpStatus.OK)
   logoutAdmin(@Res({ passthrough: true }) res: Response) {

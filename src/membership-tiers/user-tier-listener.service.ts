@@ -46,7 +46,7 @@ export class UserTierListener {
       if (!matchedTier) {
         await this.userModel.findByIdAndUpdate(userId, { totalSpent });
         console.warn(
-          `[Cảnh báo] User ${userId} có tổng chi tiêu $${totalSpent} nhưng chưa tìm thấy Hạng phù hợp.`,
+          `[Warning] User ${userId} has total spending of $${totalSpent}, but no matching rank was found.`,
         );
         return;
       }
@@ -58,12 +58,12 @@ export class UserTierListener {
       });
 
       console.log(
-        `[Thành công] User ${userId} đã tiêu $${totalSpent} -> Lên hạng: ${matchedTier.name}`,
+        `[Success] User ${userId} spent $${totalSpent} → Ranked up to: ${matchedTier.name}`,
       );
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      console.error(`[Lỗi Nâng Hạng] User ${userId}:`, errorMessage);
+      console.error(`[Rank Upgrade Error] User ${userId}:`, errorMessage);
     }
   }
 }

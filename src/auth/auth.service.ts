@@ -33,7 +33,6 @@ export class AuthService {
       throw new BadRequestException('Passwords do not match!');
     }
 
-    // Pass password thô, Schema pre('save') sẽ tự mã hóa
     const newUser = await this.usersService.create({
       name,
       email,
@@ -48,7 +47,6 @@ export class AuthService {
 
   // 2. Validate login credentials
   async validateUser(email: string, pass: string) {
-    // ⚠️ LƯU Ý: Đảm bảo findByEmail() trong UsersService có .select('+password')
     const user = await this.usersService.findByEmail(email);
 
     if (!user || !user.password) {
@@ -147,7 +145,6 @@ export class AuthService {
       );
     }
 
-    // 🟢 SỬA: Gán trực tiếp newPassword, để Schema pre('save') tự mã hóa (tránh double hash)
     user.password = newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;

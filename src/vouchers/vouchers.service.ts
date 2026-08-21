@@ -18,7 +18,7 @@ export class VouchersService {
   async findOne(id: string): Promise<Voucher> {
     const voucher = await this.voucherModel.findById(id).exec();
     if (!voucher) {
-      throw new NotFoundException('Không tìm thấy Voucher');
+      throw new NotFoundException('Voucher not found.');
     }
     return voucher;
   }
@@ -34,7 +34,7 @@ export class VouchersService {
       .exec();
 
     if (!voucher) {
-      throw new NotFoundException('Không tìm thấy Voucher');
+      throw new NotFoundException('Voucher not found.');
     }
     return voucher;
   }
@@ -42,7 +42,7 @@ export class VouchersService {
   async remove(id: string): Promise<Voucher> {
     const voucher = await this.voucherModel.findByIdAndDelete(id).exec();
     if (!voucher) {
-      throw new NotFoundException('Không tìm thấy Voucher');
+      throw new NotFoundException('Voucher not found.');
     }
     return voucher;
   }

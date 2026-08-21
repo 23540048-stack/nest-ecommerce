@@ -22,9 +22,7 @@ export class CartService {
     private readonly productModel: Model<ProductDocument>,
   ) {}
 
-  // =========================================================
   // CALCULATE TOTAL
-  // =========================================================
 
   private calculateTotalPrice(cart: CartDocument): number {
     return cart.items.reduce(
@@ -33,9 +31,7 @@ export class CartService {
     );
   }
 
-  // =========================================================
   // GET CART
-  // =========================================================
 
   async getCart(userId: string): Promise<CartDocument> {
     let cart = await this.cartModel
@@ -55,9 +51,7 @@ export class CartService {
     return cart;
   }
 
-  // =========================================================
   // ADD TO CART
-  // =========================================================
 
   async addToCart(
     userId: string,
@@ -94,9 +88,7 @@ export class CartService {
       });
     }
 
-    // =======================================================
     // FIND EXISTING ITEM
-    // =======================================================
 
     const itemIndex = cart.items.findIndex((item: any) => {
       const currentProductId = item.productId?._id
@@ -109,9 +101,7 @@ export class CartService {
       );
     });
 
-    // =======================================================
     // ITEM ALREADY EXISTS
-    // =======================================================
 
     if (itemIndex > -1) {
       const newQuantity =
@@ -128,9 +118,7 @@ export class CartService {
       cart.items[itemIndex].price = Number(product.price);
     }
 
-    // =======================================================
     // NEW ITEM
-    // =======================================================
     else {
       const newItem: any = {
         productId: new Types.ObjectId(productId),
@@ -154,17 +142,7 @@ export class CartService {
     return savedCart.populate('items.productId');
   }
 
-  // =========================================================
   // UPDATE CART ITEM QUANTITY
-  // =========================================================
-  //
-  // IMPORTANT:
-  // param = CART ITEM ID
-  // NOT PRODUCT ID
-  //
-  // PATCH /cart/items/:itemId
-  //
-  // =========================================================
 
   async updateQuantity(
     userId: string,
@@ -179,9 +157,7 @@ export class CartService {
       throw new BadRequestException('Quantity must be at least 1.');
     }
 
-    // -------------------------------------------------------
     // Find cart
-    // -------------------------------------------------------
 
     const cart = await this.cartModel.findOne({
       userId: new Types.ObjectId(userId),
@@ -191,9 +167,7 @@ export class CartService {
       throw new NotFoundException('Cart not found.');
     }
 
-    // -------------------------------------------------------
     // Find cart item by ITEM _id
-    // -------------------------------------------------------
 
     const itemIndex = cart.items.findIndex(
       (item: any) => item._id?.toString() === itemId,
@@ -205,9 +179,7 @@ export class CartService {
 
     const item = cart.items[itemIndex];
 
-    // -------------------------------------------------------
     // Check product stock
-    // -------------------------------------------------------
 
     const product = await this.productModel.findById(item.productId);
 
@@ -221,9 +193,7 @@ export class CartService {
       );
     }
 
-    // -------------------------------------------------------
     // Update quantity
-    // -------------------------------------------------------
 
     cart.items[itemIndex].quantity = Number(quantity);
 
@@ -232,24 +202,18 @@ export class CartService {
 
     cart.markModified('items');
 
-    // -------------------------------------------------------
     // Recalculate total
-    // -------------------------------------------------------
 
     cart.totalPrice = this.calculateTotalPrice(cart);
 
-    // -------------------------------------------------------
     // Save
-    // -------------------------------------------------------
 
     const savedCart = await cart.save();
 
     return savedCart.populate('items.productId');
   }
 
-  // =========================================================
   // REMOVE CART ITEM
-  // =========================================================
 
   async removeFromCart(userId: string, itemId: string): Promise<CartDocument> {
     if (!Types.ObjectId.isValid(itemId)) {
@@ -283,9 +247,7 @@ export class CartService {
     return savedCart.populate('items.productId');
   }
 
-  // =========================================================
   // CLEAR CART
-  // =========================================================
 
   async clearCart(userId: string): Promise<CartDocument> {
     const cart = await this.cartModel.findOne({

@@ -87,7 +87,6 @@ export class Order {
   })
   status!: OrderStatus;
 
-  // Bổ sung cờ đánh dấu đơn đã được cộng Chakra & tổng chi tiêu chưa
   @Prop({ default: false })
   isRewardProcessed?: boolean;
 }

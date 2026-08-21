@@ -37,7 +37,6 @@ export class PromotionsController {
     return this.promotionsService.update(id, updateDto);
   }
 
-  // 🔴 API để phía Order Checkout gọi tăng lượt dùng thực tế
   @Patch('apply/:code')
   applyPromotion(@Param('code') code: string) {
     return this.promotionsService.applyPromotion(code);

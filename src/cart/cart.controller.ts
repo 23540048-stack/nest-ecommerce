@@ -19,28 +19,21 @@ import { ClientAuthGuard } from '../auth/guards/client-auth.guard';
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  // =========================================================
   // GET CART
-  // =========================================================
 
   @Get()
   getCart(@Req() req: any) {
     return this.cartService.getCart(req.user.userId);
   }
 
-  // =========================================================
   // ADD TO CART
-  // =========================================================
 
   @Post('add')
   addToCart(@Req() req: any, @Body() addToCartDto: AddToCartDto) {
     return this.cartService.addToCart(req.user.userId, addToCartDto);
   }
 
-  // =========================================================
-  // UPDATE QUANTITY
   // PATCH /cart/items/:itemId
-  // =========================================================
 
   @Patch('items/:itemId')
   updateQuantity(
@@ -55,19 +48,14 @@ export class CartController {
     );
   }
 
-  // =========================================================
   // REMOVE ONE ITEM
-  // DELETE /cart/items/:itemId
-  // =========================================================
 
   @Delete('items/:itemId')
   removeFromCart(@Req() req: any, @Param('itemId') itemId: string) {
     return this.cartService.removeFromCart(req.user.userId, itemId);
   }
 
-  // =========================================================
   // CLEAR CART
-  // =========================================================
 
   @Delete('clear')
   clearCart(@Req() req: any) {

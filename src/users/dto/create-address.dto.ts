@@ -7,18 +7,18 @@ import {
 } from 'class-validator';
 
 export class CreateAddressDto {
-  @IsNotEmpty({ message: 'Tên người nhận không được để trống' })
+  @IsNotEmpty({ message: 'Recipient name cannot be empty' })
   @IsString()
   receiverName!: string;
 
-  @IsNotEmpty({ message: 'Số điện thoại không được để trống' })
+  @IsNotEmpty({ message: 'Phone number cannot be empty' })
   @IsString()
   @Matches(/^(0|\+84)[3|5|7|8|9][0-9]{8}$/, {
-    message: 'Số điện thoại không hợp lệ!',
+    message: 'Invalid phone number!',
   })
   phone!: string;
 
-  @IsNotEmpty({ message: 'Địa chỉ chi tiết không được để trống' })
+  @IsNotEmpty({ message: 'Detailed address cannot be empty' })
   @IsString()
   fullAddress!: string;
 

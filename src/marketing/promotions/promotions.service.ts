@@ -139,9 +139,7 @@ export class PromotionsService {
       .exec();
 
     if (!updated) {
-      throw new BadRequestException(
-        'Mã promotion không hợp lệ hoặc đã hết hạn',
-      );
+      throw new BadRequestException('Invalid or expired promotion code.');
     }
 
     return this.resolveStatus(updated);

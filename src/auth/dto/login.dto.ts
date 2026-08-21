@@ -1,12 +1,12 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class LoginDto {
-  @IsEmail({}, { message: 'Email không đúng định dạng' })
-  @IsNotEmpty({ message: 'Email không được để trống' })
+  @IsEmail({}, { message: 'Invalid email format.' })
+  @IsNotEmpty({ message: 'Email cannot be empty.' })
   email!: string;
 
   @IsString()
-  @MinLength(6, { message: 'Mật khẩu phải từ 6 ký tự' })
-  @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
+  @IsNotEmpty({ message: 'Password cannot be empty.' })
   password!: string;
 }

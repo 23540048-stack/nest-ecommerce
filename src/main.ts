@@ -24,7 +24,7 @@ async function bootstrap() {
     }),
   );
 
-  // 4. Bật CORS cho Frontend Vercel (Không dùng '*' khi credentials = true)
+  // 4. Bật CORS cho Frontend Vercel
   app.enableCors({
     origin: process.env.FRONTEND_URL,
     credentials: true,

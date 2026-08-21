@@ -17,8 +17,8 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req: any, file: any) => {
     return {
-      folder: 'nest-ecommerce', // Tên thư mục chứa file trên Cloudinary
-      resource_type: 'auto', // Tự động nhận diện Ảnh hay Video
+      folder: 'nest-ecommerce',
+      resource_type: 'auto',
       public_id: `${Date.now()}-${file.originalname.split('.')[0]}`,
     };
   },
@@ -33,7 +33,7 @@ export const multerOptions = {
       )
     ) {
       return callback(
-        new BadRequestException('Chỉ chấp nhận file ảnh hoặc video!'),
+        new BadRequestException('Only image or video files are accepted!'),
         false,
       );
     }

@@ -25,9 +25,7 @@ export class RolesGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
     // Nếu không có req.user (do Frontend chưa gửi Token)
     if (!user || !user.role) {
-      throw new ForbiddenException(
-        'Không tìm thấy thông tin người dùng hoặc Role!',
-      );
+      throw new ForbiddenException('User information or role not found!');
     }
 
     // So sánh không phân biệt hoa thường
@@ -37,7 +35,7 @@ export class RolesGuard implements CanActivate {
 
     if (!hasRole) {
       throw new ForbiddenException(
-        'Bạn không có quyền truy cập tài nguyên này!',
+        'You do not have permission to access this resource!',
       );
     }
 

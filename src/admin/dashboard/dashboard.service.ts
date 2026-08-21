@@ -1,9 +1,7 @@
-// src/admin/dashboard/dashboard.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-// Export các Interface để Controller và các Module khác có thể định danh kiểu dữ liệu (Sửa lỗi TS4053)
 export interface RecentMission {
   id: string;
   ninja: string;
@@ -40,7 +38,6 @@ export class DashboardService {
     let totalGear = 0;
     let registeredShinobi = 0;
 
-    // Khai báo kiểu mảng rõ ràng để tránh lỗi never[]
     let recentMissions: RecentMission[] = [];
     let lowStockItems: LowStockItem[] = [];
 
